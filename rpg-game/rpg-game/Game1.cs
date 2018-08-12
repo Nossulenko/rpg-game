@@ -9,10 +9,35 @@ namespace rpg_game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        //Player
+        Texture2D    player_Sprite; 
+        Texture2D    playerDown_Sprite;
+        Texture2D    playerLeft_Sprite;
+        Texture2D    playerRight_Sprite;
+        Texture2D    playerUp_Sprite;
+
+        //Obstacles
+        Texture2D   bush_Sprite;
+        Texture2D   tree_Sprite;
+
+        //Enemies
+        Texture2D   eyeEnemy_Sprite;
+        Texture2D   snakeEnemy_Sprite;
+
+        //Misc
+        Texture2D   bullet_Sprite;
+        Texture2D   heart_Sprite;
+
+        // Create a player object
+        Player player = new Player();
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
         }
 
        
@@ -23,15 +48,27 @@ namespace rpg_game
             base.Initialize();
         }
 
-        
+
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-        }
+            player_Sprite = Content.Load<Texture2D>("Player/player");
+            playerUp_Sprite = Content.Load<Texture2D>("Player/PlayerUp");
+            playerRight_Sprite = Content.Load<Texture2D>("Player/playerRight");
+            playerLeft_Sprite = Content.Load<Texture2D>("Player/playerLeft");
+            playerDown_Sprite = Content.Load<Texture2D>("Player/playerDown");
 
+            bullet_Sprite = Content.Load<Texture2D>("Misc/bullet");
+            heart_Sprite = Content.Load<Texture2D>("Misc/heart");
+
+            eyeEnemy_Sprite = Content.Load<Texture2D>("Enemies/eyeEnemy");
+            snakeEnemy_Sprite = Content.Load<Texture2D>("Enemies/snakeEnemy");
+
+            bush_Sprite = Content.Load<Texture2D>("Obstacles/bush");
+            tree_Sprite = Content.Load<Texture2D>("Obstacles/tree");
+        }
         
         protected override void UnloadContent()
         {
@@ -54,7 +91,11 @@ namespace rpg_game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(player_Sprite, player.Position, Color.White);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
