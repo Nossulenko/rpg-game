@@ -103,6 +103,11 @@ namespace rpg_game
                 bullet.Update(gameTime);
             }
 
+            foreach (Enemy en in Enemy.enemies)
+            {
+                en.Update(gameTime, player.Position);
+            }
+
             base.Update(gameTime);
         }
 

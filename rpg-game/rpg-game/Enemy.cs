@@ -1,12 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 
 namespace rpg_game
@@ -38,6 +31,13 @@ namespace rpg_game
         public Enemy(Vector2 newPos)
         {
             postition = newPos;
+        }
+
+        public void Update(GameTime gameTime, Vector2 playerPos)
+        {
+            Vector2 moveDir = playerPos - postition;
+            moveDir.Normalize();
+            postition += moveDir;
         }
     }
 
