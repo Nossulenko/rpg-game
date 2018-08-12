@@ -75,6 +75,11 @@ namespace rpg_game
 
             bush_Sprite = Content.Load<Texture2D>("Obstacles/bush");
             tree_Sprite = Content.Load<Texture2D>("Obstacles/tree");
+
+            player.animations[0] = new AnimatedSprite(playerDown_Sprite, 1, 4);
+            player.animations[1] = new AnimatedSprite(playerUp_Sprite, 1, 4);
+            player.animations[2] = new AnimatedSprite(playerLeft_Sprite, 1, 4); ;
+            player.animations[3] = new AnimatedSprite(playerRight_Sprite, 1, 4);
         }
         
         protected override void UnloadContent()
@@ -98,10 +103,9 @@ namespace rpg_game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            player.anim.Draw(spriteBatch, player.Position);
+
             spriteBatch.Begin();
-
-            spriteBatch.Draw(player_Sprite, player.Position, Color.White);
-
             spriteBatch.End();
 
             base.Draw(gameTime);

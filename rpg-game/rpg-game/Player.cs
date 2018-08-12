@@ -18,6 +18,9 @@ namespace rpg_game
         private Dir direction = Dir.Down;
         private bool isWalking = false;
 
+        public AnimatedSprite anim;
+        public AnimatedSprite[] animations = new AnimatedSprite[4];
+
         public int Health
         {
             get
@@ -50,6 +53,30 @@ namespace rpg_game
         {
             KeyboardState kState = Keyboard.GetState();
             float dt = (float)gt.ElapsedGameTime.TotalSeconds;
+
+            anim = animations[(int)direction];
+
+            /*switch (direction)
+            {
+                case Dir.Down:
+                    anim = animations[0];
+                    break;
+                case Dir.Up:
+                    anim = animations[1];
+                    break;
+                case Dir.Left:
+                    anim = animations[2];
+                    break;
+                case Dir.Right:
+                    anim = animations[3];
+                    break;
+                default:
+                    break;
+            }
+            */
+
+            if (isWalking)
+                anim.Update(gt);
 
             isWalking = false;
 
