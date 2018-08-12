@@ -4,6 +4,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace rpg_game
 {
+    enum Dir
+    {
+        Down,
+        Up,
+        Left,
+        Right
+    }
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -81,7 +88,7 @@ namespace rpg_game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            player.Update(gameTime);
 
             base.Update(gameTime);
         }
