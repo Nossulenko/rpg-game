@@ -77,6 +77,8 @@ namespace rpg_game
 
             if (isWalking)
                 anim.Update(gt);
+            else
+                anim.setFrame(1);
 
             isWalking = false;
 
