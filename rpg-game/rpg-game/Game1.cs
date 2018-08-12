@@ -95,6 +95,11 @@ namespace rpg_game
 
             player.Update(gameTime);
 
+            foreach(Shooting bullet in Shooting.bullets)
+            {
+                bullet.Update(gameTime);
+            }
+
             base.Update(gameTime);
         }
 
@@ -103,10 +108,16 @@ namespace rpg_game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            player.anim.Draw(spriteBatch, player.Position);
+            player.anim.Draw(spriteBatch, new Vector2(player.Position.X - 48, player.Position.Y - 48));
 
             spriteBatch.Begin();
-            spriteBatch.End();
+
+            foreach (Shooting bullet in Shooting.bullets)
+            {
+                spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Postion.X- bullet.Radius, bullet.Postion.Y - bullet.Radius), Color.White);
+            }
+
+                spriteBatch.End();
 
             base.Draw(gameTime);
         }

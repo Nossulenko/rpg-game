@@ -17,6 +17,7 @@ namespace rpg_game
         private int speed = 200;
         private Dir direction = Dir.Down;
         private bool isWalking = false;
+        private KeyboardState kStateOld = Keyboard.GetState();
 
         public AnimatedSprite anim;
         public AnimatedSprite[] animations = new AnimatedSprite[4];
@@ -125,6 +126,12 @@ namespace rpg_game
                     break;
                 }
             }
+
+            if (kState.IsKeyDown(Keys.Space) && kStateOld.IsKeyUp(Keys.Space))
+            {
+                Shooting.bullets.Add(new Shooting(pos, direction));
+            }
+            kStateOld = kState;
         }
     }
 }
