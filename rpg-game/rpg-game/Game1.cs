@@ -78,8 +78,11 @@ namespace rpg_game
 
             player.animations[0] = new AnimatedSprite(playerDown_Sprite, 1, 4);
             player.animations[1] = new AnimatedSprite(playerUp_Sprite, 1, 4);
-            player.animations[2] = new AnimatedSprite(playerLeft_Sprite, 1, 4); ;
+            player.animations[2] = new AnimatedSprite(playerLeft_Sprite, 1, 4); 
             player.animations[3] = new AnimatedSprite(playerRight_Sprite, 1, 4);
+
+            Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
+            Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
         }
         
         protected override void UnloadContent()
@@ -111,6 +114,20 @@ namespace rpg_game
             player.anim.Draw(spriteBatch, new Vector2(player.Position.X - 48, player.Position.Y - 48));
 
             spriteBatch.Begin();
+
+            foreach(Enemy en in Enemy.enemies)
+            {
+                Texture2D spriteToDraw;
+                if (en.GetType() == typeof(Snake))
+                {
+                    spriteToDraw = snakeEnemy_Sprite;
+                }
+                else
+                {
+                    spriteToDraw = eyeEnemy_Sprite;
+                }
+                spriteBatch.Draw(spriteToDraw, en.Position, Color.White);
+            }
 
             foreach (Shooting bullet in Shooting.bullets)
             {
