@@ -88,10 +88,43 @@ namespace rpg_game
             player.animations[3] = new AnimatedSprite(playerRight_Sprite, 1, 4);
 
             myMap = Content.Load<TiledMap>("Misc/game_map");
-            //all enemies is an array that contains tail objects and we are stting it = to are maps
-            // enemies layer and all object that that layer contains.
-            TiledMapObject[] allEnemies = myMap.GetLayer<TiledMapObjectLayer>("enemies").Objects;
 
+            //all enemies is an array that contains tail objects and we are stting it = to are maps
+            //enemies layer and all object that that layer contains.
+
+            TiledMapObject[] allEnemies = myMap.GetLayer<TiledMapObjectLayer>("enemies").Objects;
+            foreach (var en in allEnemies)
+            {   
+                string type;
+                en.Properties.TryGetValue("Type", out type);
+                if (type == "Snake")
+                {
+                    Enemy.enemies.Add(new Snake(en.Position));
+                }
+                else if (type == "Eye")
+                {
+                    Enemy.enemies.Add(new Eye(en.Position));
+                }
+               /* else if (type == "New Character")
+                {
+                    Enemy.enemies.Add(new New Character(en.Position));
+                }*/
+            }
+
+            TiledMapObject[] allObstacles = myMap.GetLayer<TiledMapObjectLayer>("obstacles").Objects;
+            foreach (var o in allObstacles)
+            {
+                string type;
+                o.Properties.TryGetValue("Type", out type);
+                if (type == "Bush")
+                {
+                    Obstacle.obstacles.Add(new Bush(o.Position));
+                }
+                if (type == "Bush")
+                {
+                    Obstacle.obstacles.Add(new Bush(o.Position));
+                }
+            }
             //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
             //Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
 

@@ -77,8 +77,8 @@
     <None Include="app.manifest" />
     <None Include="Content\Enemies\eyeEnemy.xnb" />
     <None Include="Content\Enemies\snakeEnemy.xnb" />
-    <None Include="Content\Misc\game_map.xnb" />
     <None Include="Content\Misc\bullet.xnb" />
+    <None Include="Content\Misc\game_map.xnb" />
     <None Include="Content\Misc\heart.xnb" />
     <None Include="Content\Misc\rpgTiles.xnb" />
     <None Include="Content\Obstacles\bush.xnb" />
