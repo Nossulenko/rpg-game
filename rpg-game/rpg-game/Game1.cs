@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tiled.Graphics;
+
 namespace rpg_game
 {
     enum Dir
@@ -35,6 +38,9 @@ namespace rpg_game
         Texture2D   bullet_Sprite;
         Texture2D   heart_Sprite;
 
+        TiledMapRenderer mapRenderer;
+        TiledMap myMap;
+
         // Create a player object
         Player player = new Player();
 
@@ -50,12 +56,12 @@ namespace rpg_game
        
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            mapRenderer = new TiledMapRenderer(GraphicsDevice);
 
             base.Initialize();
         }
 
-
+        // LOAD CONTENT BEGIN<=========================================================
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -81,14 +87,20 @@ namespace rpg_game
             player.animations[2] = new AnimatedSprite(playerLeft_Sprite, 1, 4); 
             player.animations[3] = new AnimatedSprite(playerRight_Sprite, 1, 4);
 
-            Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
-            Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
+            myMap = Content.Load<TiledMap>("Misc/game_map");
+            //all enemies is an array that contains tail objects and we are stting it = to are maps
+            // enemies layer and all object that that layer contains.
+            TiledMapObject[] allEnemies = myMap.GetLayer<TiledMapObjectLayer>("enemies").Objects;
 
-            Obstacle.obstacles.Add(new Tree(new Vector2(600, 200)));
-            Obstacle.obstacles.Add(new Bush(new Vector2(800, 400)));
+            //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
+            //Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
+
+            //Obstacle.obstacles.Add(new Tree(new Vector2(600, 200)));
+            //Obstacle.obstacles.Add(new Bush(new Vector2(800, 400)));
 
         }
-        
+        // LOAD CONTENT END<=========================================================
+
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
@@ -103,6 +115,7 @@ namespace rpg_game
                 player.Update(gameTime);
 
             foreach(Shooting bullet in Shooting.bullets)
+
             {
                 bullet.Update(gameTime);
             }
@@ -154,6 +167,9 @@ namespace rpg_game
         protected override void Draw(GameTime gameTime) 
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            mapRenderer.Draw(myMap);
+
             if (player.Health > 0)
                 player.anim.Draw(spriteBatch, new Vector2(player.Position.X - 48, player.Position.Y - 48));
 
