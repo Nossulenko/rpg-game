@@ -18,10 +18,21 @@ namespace rpg_game
         private Dir direction = Dir.Down;
         private bool isWalking = false;
         private KeyboardState kStateOld = Keyboard.GetState();
+        private int radius = 56;
+        private float healthTime = 0f;
 
         public AnimatedSprite anim;
         public AnimatedSprite[] animations = new AnimatedSprite[4];
 
+        public float Healthtimer
+        {
+            get { return healthTime; }
+            set { healthTime = value; }
+        }
+        public int Radius
+        {
+            get { return radius; }
+        }
         public int Health
         {
             get
@@ -56,25 +67,10 @@ namespace rpg_game
             float dt = (float)gt.ElapsedGameTime.TotalSeconds;
 
             anim = animations[(int)direction];
-
-            /*switch (direction)
+            if (healthTime > 0)
             {
-                case Dir.Down:
-                    anim = animations[0];
-                    break;
-                case Dir.Up:
-                    anim = animations[1];
-                    break;
-                case Dir.Left:
-                    anim = animations[2];
-                    break;
-                case Dir.Right:
-                    anim = animations[3];
-                    break;
-                default:
-                    break;
+                healthTime -= dt;
             }
-            */
 
             if (isWalking)
                 anim.Update(gt);
