@@ -81,8 +81,8 @@ namespace rpg_game
             player.animations[2] = new AnimatedSprite(playerLeft_Sprite, 1, 4); 
             player.animations[3] = new AnimatedSprite(playerRight_Sprite, 1, 4);
 
-            //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
-            //Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
+            Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
+            Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
 
             Obstacle.obstacles.Add(new Tree(new Vector2(600, 200)));
             Obstacle.obstacles.Add(new Bush(new Vector2(800, 400)));

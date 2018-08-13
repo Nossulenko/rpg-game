@@ -39,6 +39,14 @@ namespace rpg_game
 
             Vector2 moveDir = playerPos - postition;
             moveDir.Normalize();
+            // Collision between enemy and obstacles
+            Vector2 tempPos = postition;
+            tempPos += moveDir * speed * dt;
+            if (!Obstacle._collided(tempPos, radius))
+            {
+                postition += moveDir * speed * dt;
+            }
+
             postition += moveDir * speed * dt;
         }
     }
