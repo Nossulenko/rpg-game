@@ -114,14 +114,16 @@ namespace rpg_game
                 {
 
                     int sum = bullet.Radius + en.Radius;
-                    if (Vector2.Distance(bullet.Position, en.Position) > sum)
+                    if (Vector2.Distance(bullet.Position, en.Position) < sum)
                     {
                         bullet.Collision = true;
+                        en.Health--;
                     }
                 }
             }
 
-            Shooting.bullets.RemoveAll(p => p.Collision == true);
+            Shooting.bullets.RemoveAll(p => p.Collision);
+            Enemy.enemies.RemoveAll(e => e.Health <= 0);
 
             base.Update(gameTime);
         }

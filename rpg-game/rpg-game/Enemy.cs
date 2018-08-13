@@ -47,8 +47,9 @@ namespace rpg_game
     {
         public Snake(Vector2 newPos) : base(newPos)
         {
-            speed = 160;
+            speed = 120;
             radius = 42;
+            health = 2;
 
         }
     }
@@ -59,6 +60,7 @@ namespace rpg_game
         {
             speed = 80;
             radius = 45;
+            health = 7;
         }
 
     }
