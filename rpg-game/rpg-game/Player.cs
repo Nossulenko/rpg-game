@@ -101,23 +101,40 @@ namespace rpg_game
             }
             if (isWalking)
             {
+                Vector2 tempPos = pos;
                 switch (direction)
                 {
                 case Dir.Right:
-                    pos.X += speed * dt;
+                    tempPos.X += speed * dt;
+                        if (!Obstacle._collided(tempPos, radius))
+                        {
+                            pos.X += speed * dt;
+                        }
                     break;
 
                 case Dir.Left:
-                    pos.X -= speed * dt;
-                    break;
+                    tempPos.X -= speed * dt;
+                        if (!Obstacle._collided(tempPos, radius))
+                        {
+                            pos.X -= speed * dt;
+                        }
+                        break;
 
                 case Dir.Down:
-                    pos.Y += speed * dt;
-                    break;
+                    tempPos.Y += speed * dt;
+                        if (!Obstacle._collided(tempPos, radius))
+                        {
+                            pos.Y += speed * dt;
+                        }
+                        break;
 
                 case Dir.Up:
-                    pos.Y -= speed * dt;
-                    break;
+                    tempPos.Y -= speed * dt;
+                        if (!Obstacle._collided(tempPos, radius))
+                        {
+                            pos.Y -= speed * dt;
+                        }
+                        break;
                 default:
                     break;
                 }

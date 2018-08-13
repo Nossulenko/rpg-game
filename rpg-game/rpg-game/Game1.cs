@@ -124,6 +124,9 @@ namespace rpg_game
                         en.Health--;
                     }
                 }
+                // Collision between bullet and the obstacles
+                if (Obstacle._collided(bullet.Position, bullet.Radius))
+                    bullet.Collision = true;
             }
 
             foreach (Enemy en in Enemy.enemies)
@@ -173,14 +176,16 @@ namespace rpg_game
                 spriteBatch.Draw(spriteToDraw, new Vector2(en.Position.X - rad, en.Position.Y - rad), Color.White);
             }
 
-
+            // Draw obstacle sprites on the map
             foreach (Obstacle o in Obstacle.obstacles)
             {
                 Texture2D spriteToDraw;
                 if (o.GetType() == typeof(Tree))
-                {
                     spriteToDraw = tree_Sprite;
-                }
+                else
+                    spriteToDraw = bush_Sprite;
+                spriteBatch.Draw(spriteToDraw, o.Position, Color.White);
+
             }
 
             foreach (Shooting bullet in Shooting.bullets)
