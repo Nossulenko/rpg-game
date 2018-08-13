@@ -31,13 +31,15 @@ namespace rpg_game
         public Enemy(Vector2 newPos)
         {
             postition = newPos;
-        }
+        } 
 
         public void Update(GameTime gameTime, Vector2 playerPos)
         {
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             Vector2 moveDir = playerPos - postition;
             moveDir.Normalize();
-            postition += moveDir;
+            postition += moveDir * speed * dt;
         }
     }
 
@@ -45,6 +47,8 @@ namespace rpg_game
     {
         public Snake(Vector2 newPos) : base(newPos)
         {
+            speed = 160;
+            radius = 42;
 
         }
     }
@@ -53,7 +57,8 @@ namespace rpg_game
 
         public Eye(Vector2 newPos) : base(newPos)
         {
-
+            speed = 80;
+            radius = 45;
         }
 
     }

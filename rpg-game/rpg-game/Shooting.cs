@@ -16,6 +16,7 @@ namespace rpg_game
         private int speed = 800;
         private int radius = 15;
         private Dir direction;
+        private bool collision;
 
         public static List<Shooting> bullets = new List<Shooting>();
 
@@ -24,12 +25,17 @@ namespace rpg_game
             pos = newPos;
             direction = newDir;
         }
-        public Vector2 Postion
+        public Vector2 Position
         {
             get
             {
                 return pos;
             }
+        }
+        public bool Collision
+        {
+            get { return collision; }
+            set { collision = value; }
         }
         public int Radius
         {

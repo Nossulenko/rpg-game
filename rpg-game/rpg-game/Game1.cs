@@ -108,6 +108,21 @@ namespace rpg_game
                 en.Update(gameTime, player.Position);
             }
 
+            foreach (Shooting bullet in Shooting.bullets )
+            {
+                foreach (Enemy en in Enemy.enemies)
+                {
+
+                    int sum = bullet.Radius + en.Radius;
+                    if (Vector2.Distance(bullet.Position, en.Position) > sum)
+                    {
+                        bullet.Collision = true;
+                    }
+                }
+            }
+
+            Shooting.bullets.RemoveAll(p => p.Collision == true);
+
             base.Update(gameTime);
         }
 
@@ -123,20 +138,23 @@ namespace rpg_game
             foreach(Enemy en in Enemy.enemies)
             {
                 Texture2D spriteToDraw;
+                int rad;
                 if (en.GetType() == typeof(Snake))
                 {
                     spriteToDraw = snakeEnemy_Sprite;
+                    rad = 50;
                 }
                 else
                 {
                     spriteToDraw = eyeEnemy_Sprite;
+                    rad = 73;
                 }
-                spriteBatch.Draw(spriteToDraw, en.Position, Color.White);
+                spriteBatch.Draw(spriteToDraw, new Vector2(en.Position.X - rad, en.Position.Y - rad), Color.White);
             }
 
             foreach (Shooting bullet in Shooting.bullets)
             {
-                spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Postion.X- bullet.Radius, bullet.Postion.Y - bullet.Radius), Color.White);
+                spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Position.X- bullet.Radius, bullet.Position.Y - bullet.Radius), Color.White);
             }
 
                 spriteBatch.End();
