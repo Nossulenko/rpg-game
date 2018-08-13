@@ -81,8 +81,12 @@ namespace rpg_game
             player.animations[2] = new AnimatedSprite(playerLeft_Sprite, 1, 4); 
             player.animations[3] = new AnimatedSprite(playerRight_Sprite, 1, 4);
 
-            Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
-            Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
+            //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
+            //Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
+
+            Obstacle.obstacles.Add(new Tree(new Vector2(600, 200)));
+            Obstacle.obstacles.Add(new Bush(new Vector2(800, 400)));
+
         }
         
         protected override void UnloadContent()
@@ -90,7 +94,7 @@ namespace rpg_game
             // TODO: Unload any non ContentManager content here
         }
 
-        
+        // UPDATE BEGIN<===============================================================
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -137,9 +141,14 @@ namespace rpg_game
 
             base.Update(gameTime);
         }
+        // UPDATE END <===============================================================
 
-        
-        protected override void Draw(GameTime gameTime)
+
+
+
+
+        // DRAW BEGIN <=================================================================
+        protected override void Draw(GameTime gameTime) 
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             if (player.Health > 0)
@@ -164,6 +173,16 @@ namespace rpg_game
                 spriteBatch.Draw(spriteToDraw, new Vector2(en.Position.X - rad, en.Position.Y - rad), Color.White);
             }
 
+
+            foreach (Obstacle o in Obstacle.obstacles)
+            {
+                Texture2D spriteToDraw;
+                if (o.GetType() == typeof(Tree))
+                {
+                    spriteToDraw = tree_Sprite;
+                }
+            }
+
             foreach (Shooting bullet in Shooting.bullets)
             {
                 spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Position.X- bullet.Radius, bullet.Position.Y - bullet.Radius), Color.White);
@@ -177,5 +196,6 @@ namespace rpg_game
 
             base.Draw(gameTime);
         }
+        // DRAW END <===========================================================
     }
 }
