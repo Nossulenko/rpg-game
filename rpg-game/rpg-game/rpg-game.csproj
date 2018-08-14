@@ -88,8 +88,11 @@
     <None Include="Content\Player\playerLeft.xnb" />
     <None Include="Content\Player\playerRight.xnb" />
     <None Include="Content\Player\playerUp.xnb" />
+    <None Include="Content\Screens\begin.xnb" />
+    <None Include="Content\Screens\end.xnb" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

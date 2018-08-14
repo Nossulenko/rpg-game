@@ -19,22 +19,19 @@ namespace rpg_game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        //Player
+        Texture2D beginScreen, endScreen;
         Texture2D player_Sprite, playerDown_Sprite, playerLeft_Sprite, playerRight_Sprite, playerUp_Sprite;
-        
-        //Obstacles
-        Texture2D   bush_Sprite, tree_Sprite;
-        
-        //Enemies
-        Texture2D   eyeEnemy_Sprite, snakeEnemy_Sprite;
- 
-        //Misc
-        Texture2D   bullet_Sprite, heart_Sprite;
+        Texture2D bush_Sprite, tree_Sprite;
+        Texture2D eyeEnemy_Sprite, snakeEnemy_Sprite;
+        Texture2D bullet_Sprite, heart_Sprite;
 
         TiledMapRenderer mapRenderer;
         TiledMap myMap;
         Camera2D playerCam;
 
+        bool beginScreenOn = true, endScreenOn = false;
+
+        Rectangle screen;
         // Create a player object
         Player player = new Player();
 
@@ -68,6 +65,10 @@ namespace rpg_game
             playerLeft_Sprite = Content.Load<Texture2D>("Player/playerLeft");
             playerDown_Sprite = Content.Load<Texture2D>("Player/playerDown");
 
+            endScreen = Content.Load<Texture2D>("Screens/end");
+            beginScreen = Content.Load<Texture2D>("Screens/begin");
+
+
             bullet_Sprite = Content.Load<Texture2D>("Misc/bullet");
             heart_Sprite = Content.Load<Texture2D>("Misc/heart");
 
@@ -83,6 +84,8 @@ namespace rpg_game
             player.animations[3] = new AnimatedSprite(playerRight_Sprite, 1, 4);
 
             myMap = Content.Load<TiledMap>("Misc/game_map");
+
+            screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
             //all enemies is an array that contains tail objects and we are stting it = to are maps
             //enemies layer and all object that that layer contains.
@@ -135,49 +138,67 @@ namespace rpg_game
         // UPDATE BEGIN<===============================================================
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-            if(player.Health > 0)
-                player.Update(gameTime);
+            MouseState mouse = Mouse.GetState();
 
-            playerCam.LookAt(player.Position);
-
-            foreach(Shooting bullet in Shooting.bullets)
-                bullet.Update(gameTime);
-            
-            foreach (Enemy en in Enemy.enemies)
-                en.Update(gameTime, player.Position);
-            
-
-            foreach (Shooting bullet in Shooting.bullets )
+            if (beginScreenOn == false && endScreenOn == false)
             {
+
+            
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    Exit();
+                if(player.Health > 0)
+                    player.Update(gameTime);
+
+                playerCam.LookAt(player.Position);
+
+                foreach(Shooting bullet in Shooting.bullets)
+                    bullet.Update(gameTime);
+            
+                foreach (Enemy en in Enemy.enemies)
+                    en.Update(gameTime, player.Position);
+            
+
+                foreach (Shooting bullet in Shooting.bullets )
+                {
+                    foreach (Enemy en in Enemy.enemies)
+                    {
+                        int sum = bullet.Radius + en.Radius;
+                        if (Vector2.Distance(bullet.Position, en.Position) < sum)
+                        {
+                            bullet.Collision = true;
+                            en.Health--;
+                        }
+                    }
+                    // Collision between bullet and the obstacles
+                    if (Obstacle._collided(bullet.Position, bullet.Radius))
+                        bullet.Collision = true;
+                }
+
                 foreach (Enemy en in Enemy.enemies)
                 {
-                    int sum = bullet.Radius + en.Radius;
-                    if (Vector2.Distance(bullet.Position, en.Position) < sum)
+                    int sum = player.Radius + en.Radius;
+                    if (Vector2.Distance(player.Position, en.Position) < sum && player.Healthtimer <= 0)
                     {
-                        bullet.Collision = true;
-                        en.Health--;
+                        player.Health--;
+                        player.Healthtimer = 1.5f;
                     }
                 }
-                // Collision between bullet and the obstacles
-                if (Obstacle._collided(bullet.Position, bullet.Radius))
-                    bullet.Collision = true;
-            }
 
-            foreach (Enemy en in Enemy.enemies)
+                Shooting.bullets.RemoveAll(p => p.Collision);
+                Enemy.enemies.RemoveAll(e => e.Health <= 0);
+            }
+            else if (beginScreenOn)
             {
-                int sum = player.Radius + en.Radius;
-                if (Vector2.Distance(player.Position, en.Position) < sum && player.Healthtimer <= 0)
+                if (mouse.LeftButton == ButtonState.Pressed)
                 {
-                    player.Health--;
-                    player.Healthtimer = 1.5f;
+                    beginScreenOn = false;
+                    endScreenOn = false;
                 }
             }
-
-            Shooting.bullets.RemoveAll(p => p.Collision);
-            Enemy.enemies.RemoveAll(e => e.Health <= 0);
-
+            else if (player.Health == 0)
+            {
+                endScreenOn = true;
+            }
             base.Update(gameTime);
         }
         // UPDATE END <===============================================================
@@ -195,53 +216,71 @@ namespace rpg_game
 
             
 
-            spriteBatch.Begin(transformMatrix: playerCam.GetViewMatrix());
-            if (player.Health > 0)
-                player.anim.Draw(spriteBatch, new Vector2(player.Position.X - 48, player.Position.Y - 48));
+                spriteBatch.Begin(transformMatrix: playerCam.GetViewMatrix());
 
-            foreach (Enemy en in Enemy.enemies)
-            {
-                Texture2D spriteToDraw;
-                int rad;
-                if (en.GetType() == typeof(Snake))
+            if (beginScreenOn == false && endScreenOn == false)
+            { 
+                if (player.Health > 0)
+                    player.anim.Draw(spriteBatch, new Vector2(player.Position.X - 48, player.Position.Y - 48));
+
+                foreach (Enemy en in Enemy.enemies)
                 {
-                    spriteToDraw = snakeEnemy_Sprite;
-                    rad = 50;
+                    Texture2D spriteToDraw;
+                    int rad;
+                    if (en.GetType() == typeof(Snake))
+                    {
+                        spriteToDraw = snakeEnemy_Sprite;
+                        rad = 50;
+                    }
+                    else
+                    {
+                        spriteToDraw = eyeEnemy_Sprite;
+                        rad = 73;
+                    }
+                    spriteBatch.Draw(spriteToDraw, new Vector2(en.Position.X - rad, en.Position.Y - rad), Color.White);
                 }
-                else
+
+                // Draw obstacle sprites on the map
+                foreach (Obstacle o in Obstacle.obstacles)
                 {
-                    spriteToDraw = eyeEnemy_Sprite;
-                    rad = 73;
+                    Texture2D spriteToDraw;
+                    if (o.GetType() == typeof(Tree))
+                        spriteToDraw = tree_Sprite;
+                    else
+                        spriteToDraw = bush_Sprite;
+                    spriteBatch.Draw(spriteToDraw, o.Position, Color.White);
+
                 }
-                spriteBatch.Draw(spriteToDraw, new Vector2(en.Position.X - rad, en.Position.Y - rad), Color.White);
+
+                foreach (Shooting bullet in Shooting.bullets)
+                {
+                    spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Position.X- bullet.Radius, bullet.Position.Y - bullet.Radius), Color.White);
+                }
             }
 
-            // Draw obstacle sprites on the map
-            foreach (Obstacle o in Obstacle.obstacles)
+                spriteBatch.End();
+               spriteBatch.Begin();
+            //BEGINSCREEN=====================================================
+            if (beginScreenOn)
             {
-                Texture2D spriteToDraw;
-                if (o.GetType() == typeof(Tree))
-                    spriteToDraw = tree_Sprite;
-                else
-                    spriteToDraw = bush_Sprite;
-                spriteBatch.Draw(spriteToDraw, o.Position, Color.White);
-
+                spriteBatch.Draw(beginScreen, screen, Color.White);
             }
-
-            foreach (Shooting bullet in Shooting.bullets)
+            //ENDSCREEN=======================================================
+            if (endScreenOn)
             {
-                spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Position.X- bullet.Radius, bullet.Position.Y - bullet.Radius), Color.White);
+                spriteBatch.Draw(endScreen, screen, Color.White);
             }
             
-               spriteBatch.End();
-               spriteBatch.Begin();
-
-            for (int i = 0; i < player.Health; i++)
+            if (beginScreenOn == false && endScreenOn == false) //STARTSCREEN
             {
-                spriteBatch.Draw(heart_Sprite, new Vector2(i * 63, 0), Color.White);
+                for (int i = 0; i < player.Health; i++)
+                {
+                    spriteBatch.Draw(heart_Sprite, new Vector2(i * 63, 0), Color.White);
+                }
             }
-            spriteBatch.End();
-            base.Draw(gameTime);
+
+                spriteBatch.End();
+                base.Draw(gameTime);
         }
         // DRAW END <===========================================================
     }
