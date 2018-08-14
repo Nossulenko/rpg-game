@@ -120,9 +120,9 @@ namespace rpg_game
                 {
                     Obstacle.obstacles.Add(new Bush(o.Position));
                 }
-                if (type == "Bush")
+                if (type == "Tree")
                 {
-                    Obstacle.obstacles.Add(new Bush(o.Position));
+                    Obstacle.obstacles.Add(new Tree(o.Position));
                 }
             }
             //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
