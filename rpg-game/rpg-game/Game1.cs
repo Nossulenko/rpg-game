@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Graphics;
 
@@ -20,26 +20,20 @@ namespace rpg_game
         SpriteBatch spriteBatch;
 
         //Player
-        Texture2D    player_Sprite; 
-        Texture2D    playerDown_Sprite;
-        Texture2D    playerLeft_Sprite;
-        Texture2D    playerRight_Sprite;
-        Texture2D    playerUp_Sprite;
-
+        Texture2D player_Sprite, playerDown_Sprite, playerLeft_Sprite, playerRight_Sprite, playerUp_Sprite;
+        
         //Obstacles
-        Texture2D   bush_Sprite;
-        Texture2D   tree_Sprite;
-
+        Texture2D   bush_Sprite, tree_Sprite;
+        
         //Enemies
-        Texture2D   eyeEnemy_Sprite;
-        Texture2D   snakeEnemy_Sprite;
-
+        Texture2D   eyeEnemy_Sprite, snakeEnemy_Sprite;
+ 
         //Misc
-        Texture2D   bullet_Sprite;
-        Texture2D   heart_Sprite;
+        Texture2D   bullet_Sprite, heart_Sprite;
 
         TiledMapRenderer mapRenderer;
         TiledMap myMap;
+        Camera2D playerCam;
 
         // Create a player object
         Player player = new Player();
@@ -57,6 +51,7 @@ namespace rpg_game
         protected override void Initialize()
         {
             mapRenderer = new TiledMapRenderer(GraphicsDevice);
+            playerCam = new Camera2D(GraphicsDevice);
 
             base.Initialize();
         }
@@ -117,13 +112,11 @@ namespace rpg_game
                 string type;
                 o.Properties.TryGetValue("Type", out type);
                 if (type == "Bush")
-                {
                     Obstacle.obstacles.Add(new Bush(o.Position));
-                }
+               
                 if (type == "Tree")
-                {
                     Obstacle.obstacles.Add(new Tree(o.Position));
-                }
+                
             }
             //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
             //Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
@@ -147,22 +140,19 @@ namespace rpg_game
             if(player.Health > 0)
                 player.Update(gameTime);
 
+            playerCam.LookAt(player.Position);
+
             foreach(Shooting bullet in Shooting.bullets)
-
-            {
                 bullet.Update(gameTime);
-            }
-
+            
             foreach (Enemy en in Enemy.enemies)
-            {
                 en.Update(gameTime, player.Position);
-            }
+            
 
             foreach (Shooting bullet in Shooting.bullets )
             {
                 foreach (Enemy en in Enemy.enemies)
                 {
-
                     int sum = bullet.Radius + en.Radius;
                     if (Vector2.Distance(bullet.Position, en.Position) < sum)
                     {
@@ -199,16 +189,17 @@ namespace rpg_game
         // DRAW BEGIN <=================================================================
         protected override void Draw(GameTime gameTime) 
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
-            mapRenderer.Draw(myMap);
+            mapRenderer.Draw(myMap, playerCam.GetViewMatrix());
 
+            
+
+            spriteBatch.Begin(transformMatrix: playerCam.GetViewMatrix());
             if (player.Health > 0)
                 player.anim.Draw(spriteBatch, new Vector2(player.Position.X - 48, player.Position.Y - 48));
 
-            spriteBatch.Begin();
-
-            foreach(Enemy en in Enemy.enemies)
+            foreach (Enemy en in Enemy.enemies)
             {
                 Texture2D spriteToDraw;
                 int rad;
@@ -241,13 +232,15 @@ namespace rpg_game
             {
                 spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Position.X- bullet.Radius, bullet.Position.Y - bullet.Radius), Color.White);
             }
+            
+               spriteBatch.End();
+               spriteBatch.Begin();
+
             for (int i = 0; i < player.Health; i++)
             {
                 spriteBatch.Draw(heart_Sprite, new Vector2(i * 63, 0), Color.White);
             }
-
-                spriteBatch.End();
-
+            spriteBatch.End();
             base.Draw(gameTime);
         }
         // DRAW END <===========================================================
