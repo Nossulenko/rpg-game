@@ -19,20 +19,25 @@ namespace rpg_game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Texture2D beginScreen, endScreen;
-        Texture2D player_Sprite, playerDown_Sprite, playerLeft_Sprite, playerRight_Sprite, playerUp_Sprite;
-        Texture2D bush_Sprite, tree_Sprite;
-        Texture2D eyeEnemy_Sprite, snakeEnemy_Sprite;
-        Texture2D bullet_Sprite, heart_Sprite;
-
         TiledMapRenderer mapRenderer;
         TiledMap myMap;
         Camera2D playerCam;
 
-        bool beginScreenOn = true, endScreenOn = false;
-
-        Rectangle screen;
-        // Create a player object
+        Texture2D 
+            beginScreen, 
+            endScreen , 
+            player_Sprite, 
+            playerDown_Sprite, 
+            playerLeft_Sprite, 
+            playerRight_Sprite, 
+            playerUp_Sprite, 
+            bush_Sprite, 
+            tree_Sprite, 
+            eyeEnemy_Sprite, 
+            snakeEnemy_Sprite, 
+            bullet_Sprite, 
+            heart_Sprite;
+         
         Player player = new Player();
 
         public Game1()
@@ -85,7 +90,7 @@ namespace rpg_game
 
             myMap = Content.Load<TiledMap>("Misc/game_map");
 
-            screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            //screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
             //all enemies is an array that contains tail objects and we are stting it = to are maps
             //enemies layer and all object that that layer contains.
