@@ -12,26 +12,24 @@ namespace rpg_game
 {
     class Player
     {
-        private Vector2 pos = new Vector2(100, 100);
-        private int health = 3;
-        private int speed = 200;
+        private Vector2 pos = new Vector2(400, 400);
+        private int health = 3, speed = 200, rad = 56;
+        private float healthDelay = 0f;
         private Dir direction = Dir.Down;
         private bool isWalking = false;
-        private KeyboardState kStateOld = Keyboard.GetState();
-        private int radius = 56;
-        private float healthTime = 0f;
+        private KeyboardState previousKeyState = Keyboard.GetState();
 
         public AnimatedSprite anim;
         public AnimatedSprite[] animations = new AnimatedSprite[4];
 
-        public float Healthtimer
+        public float Healthdelay
         {
-            get { return healthTime; }
-            set { healthTime = value; }
+            get { return healthDelay; }
+            set { healthDelay = value; }
         }
-        public int Radius
+        public int Rad
         {
-            get { return radius; }
+            get { return rad; }
         }
         public int Health
         {
@@ -45,7 +43,7 @@ namespace rpg_game
             }
         }
 
-        public Vector2 Position
+        public Vector2 Pos
         {
             get
             {
@@ -63,13 +61,13 @@ namespace rpg_game
 
         public void Update(GameTime gt)
         {
-            KeyboardState kState = Keyboard.GetState();
+            KeyboardState currentKeyState = Keyboard.GetState();
             float dt = (float)gt.ElapsedGameTime.TotalSeconds;
 
             anim = animations[(int)direction];
-            if (healthTime > 0)
+            if (healthDelay > 0)
             {
-                healthTime -= dt;
+                healthDelay -= dt;
             }
 
             if (isWalking)
@@ -79,22 +77,22 @@ namespace rpg_game
 
             isWalking = false;
 
-            if (kState.IsKeyDown(Keys.Right))
+            if (currentKeyState.IsKeyDown(Keys.Right))
             {
                 direction = Dir.Right;
                 isWalking = true;
             }
-            if (kState.IsKeyDown(Keys.Left))
+            if (currentKeyState.IsKeyDown(Keys.Left))
             {
                 direction = Dir.Left;
                 isWalking = true;
             }
-            if (kState.IsKeyDown(Keys.Up))
+            if (currentKeyState.IsKeyDown(Keys.Up))
             {
                 direction = Dir.Up;
                 isWalking = true;
             }
-            if (kState.IsKeyDown(Keys.Down))
+            if (currentKeyState.IsKeyDown(Keys.Down))
             {
                 direction = Dir.Down;
                 isWalking = true;
@@ -106,7 +104,7 @@ namespace rpg_game
                 {
                 case Dir.Right:
                     tempPos.X += speed * dt;
-                        if (!Obstacle._collided(tempPos, radius))
+                        if (!Obstacle._collided(tempPos, rad))
                         {
                             pos.X += speed * dt;
                         }
@@ -114,7 +112,7 @@ namespace rpg_game
 
                 case Dir.Left:
                     tempPos.X -= speed * dt;
-                        if (!Obstacle._collided(tempPos, radius))
+                        if (!Obstacle._collided(tempPos, rad))
                         {
                             pos.X -= speed * dt;
                         }
@@ -122,7 +120,7 @@ namespace rpg_game
 
                 case Dir.Down:
                     tempPos.Y += speed * dt;
-                        if (!Obstacle._collided(tempPos, radius))
+                        if (!Obstacle._collided(tempPos, rad))
                         {
                             pos.Y += speed * dt;
                         }
@@ -130,7 +128,7 @@ namespace rpg_game
 
                 case Dir.Up:
                     tempPos.Y -= speed * dt;
-                        if (!Obstacle._collided(tempPos, radius))
+                        if (!Obstacle._collided(tempPos, rad))
                         {
                             pos.Y -= speed * dt;
                         }
@@ -140,11 +138,11 @@ namespace rpg_game
                 }
             }
 
-            if (kState.IsKeyDown(Keys.Space) && kStateOld.IsKeyUp(Keys.Space))
+            if (currentKeyState.IsKeyDown(Keys.Space) && previousKeyState.IsKeyUp(Keys.Space))
             {
                 Shooting.bullets.Add(new Shooting(pos, direction));
             }
-            kStateOld = kState;
+            previousKeyState = currentKeyState;
         }
     }
 }

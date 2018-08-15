@@ -23,20 +23,25 @@ namespace rpg_game
         TiledMap myMap;
         Camera2D playerCam;
 
-        Texture2D 
-            beginScreen, 
-            endScreen , 
-            player_Sprite, 
-            playerDown_Sprite, 
-            playerLeft_Sprite, 
-            playerRight_Sprite, 
-            playerUp_Sprite, 
-            bush_Sprite, 
-            tree_Sprite, 
-            eyeEnemy_Sprite, 
-            snakeEnemy_Sprite, 
-            bullet_Sprite, 
-            heart_Sprite;
+        Texture2D
+            beginScreen,
+            endScreen,
+            player_Sprite,
+            playerDown_Sprite,
+            playerLeft_Sprite,
+            playerRight_Sprite,
+            playerUp_Sprite,
+            bush_Sprite,
+            tree_Sprite,
+            eyeEnemy_Sprite,
+            snakeEnemy_Sprite,
+            bullet_Sprite,
+            heart_Sprite,
+            zombieFront_Sprite,
+            zombieDown_Sprite,
+            zombieUp_Sprite,
+            zombieLeft_Sprite,
+            zombieRight_Sprite;
          
         Player player = new Player();
 
@@ -45,8 +50,8 @@ namespace rpg_game
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1900;
+            graphics.PreferredBackBufferHeight = 1200;
         }
 
        
@@ -70,8 +75,14 @@ namespace rpg_game
             playerLeft_Sprite = Content.Load<Texture2D>("Player/playerLeft");
             playerDown_Sprite = Content.Load<Texture2D>("Player/playerDown");
 
-            endScreen = Content.Load<Texture2D>("Screens/end");
-            beginScreen = Content.Load<Texture2D>("Screens/begin");
+            zombieFront_Sprite = Content.Load<Texture2D>("Zombie1/zombieFront");
+            zombieDown_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Down");
+            zombieUp_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Up");
+            zombieLeft_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Left");
+            zombieRight_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Right");
+
+            //endScreen = Content.Load<Texture2D>("Screens/end");
+            //beginScreen = Content.Load<Texture2D>("Screens/begin");
 
 
             bullet_Sprite = Content.Load<Texture2D>("Misc/bullet");
@@ -83,11 +94,22 @@ namespace rpg_game
             bush_Sprite = Content.Load<Texture2D>("Obstacles/bush");
             tree_Sprite = Content.Load<Texture2D>("Obstacles/tree");
 
-            player.animations[0] = new AnimatedSprite(playerDown_Sprite, 1, 4);
-            player.animations[1] = new AnimatedSprite(playerUp_Sprite, 1, 4);
-            player.animations[2] = new AnimatedSprite(playerLeft_Sprite, 1, 4); 
-            player.animations[3] = new AnimatedSprite(playerRight_Sprite, 1, 4);
+            AnimatedSprite playerWalkDown = new AnimatedSprite(playerDown_Sprite, 1, 4);
+            AnimatedSprite playerWalkUp = new AnimatedSprite(playerUp_Sprite, 1, 4);
+            AnimatedSprite playerWalkLeft = new AnimatedSprite(playerLeft_Sprite, 1, 4);
+            AnimatedSprite playerWalkRight = new AnimatedSprite(playerRight_Sprite, 1, 4);
 
+            player.animations[0] = playerWalkDown;
+            player.animations[1] = playerWalkUp;
+            player.animations[2] = playerWalkLeft;
+            player.animations[3] = playerWalkRight;
+
+            
+            AnimatedSprite zombieWalkDown = new AnimatedSprite(zombieDown_Sprite, 1, 4);
+            AnimatedSprite zombieWalkUp = new AnimatedSprite(zombieUp_Sprite, 1, 4);
+            AnimatedSprite zombiueWalkLeft = new AnimatedSprite(zombieLeft_Sprite, 1, 4);
+            AnimatedSprite zombieWalkRight = new AnimatedSprite(zombieRight_Sprite, 1, 4);
+            
             myMap = Content.Load<TiledMap>("Misc/game_map");
 
             //screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
@@ -102,28 +124,25 @@ namespace rpg_game
                 en.Properties.TryGetValue("Type", out type);
                 if (type == "Snake")
                 {
-                    Enemy.enemies.Add(new Snake(en.Position));
+                    Monster.enemies.Add(new Snake(en.Position));
                 }
                 else if (type == "Eye")
                 {
-                    Enemy.enemies.Add(new Eye(en.Position));
+                    Monster.enemies.Add(new Eye(en.Position));
                 }
-               /* else if (type == "New Character")
-                {
-                    Enemy.enemies.Add(new New Character(en.Position));
-                }*/
+               
             }
 
             TiledMapObject[] allObstacles = myMap.GetLayer<TiledMapObjectLayer>("obstacles").Objects;
-            foreach (var o in allObstacles)
+            foreach (var obs in allObstacles)
             {
                 string type;
-                o.Properties.TryGetValue("Type", out type);
+                obs.Properties.TryGetValue("Type", out type);
                 if (type == "Bush")
-                    Obstacle.obstacles.Add(new Bush(o.Position));
+                    Obstacle.obstacles.Add(new Bush(obs.Position));
                
                 if (type == "Tree")
-                    Obstacle.obstacles.Add(new Tree(o.Position));
+                    Obstacle.obstacles.Add(new Tree(obs.Position));
                 
             }
             //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
@@ -154,21 +173,21 @@ namespace rpg_game
                 if(player.Health > 0)
                     player.Update(gameTime);
 
-                playerCam.LookAt(player.Position);
+                playerCam.LookAt(player.Pos);
 
                 foreach(Shooting bullet in Shooting.bullets)
                     bullet.Update(gameTime);
             
-                foreach (Enemy en in Enemy.enemies)
-                    en.Update(gameTime, player.Position);
+                foreach (Monster en in Monster.enemies)
+                    en.Update(gameTime, player.Pos);
             
 
                 foreach (Shooting bullet in Shooting.bullets )
                 {
-                    foreach (Enemy en in Enemy.enemies)
+                    foreach (Monster en in Monster.enemies)
                     {
-                        int sum = bullet.Radius + en.Radius;
-                        if (Vector2.Distance(bullet.Position, en.Position) < sum)
+                        int sum = bullet.Radius + en.Rad;
+                        if (Vector2.Distance(bullet.Position, en.Pos) < sum)
                         {
                             bullet.Collision = true;
                             en.Health--;
@@ -179,18 +198,18 @@ namespace rpg_game
                         bullet.Collision = true;
                 }
 
-                foreach (Enemy en in Enemy.enemies)
+                foreach (Monster en in Monster.enemies)
                 {
-                    int sum = player.Radius + en.Radius;
-                    if (Vector2.Distance(player.Position, en.Position) < sum && player.Healthtimer <= 0)
+                    int sum = player.Rad + en.Rad;
+                    if (Vector2.Distance(player.Pos, en.Pos) < sum && player.Healthdelay <= 0)
                     {
                         player.Health--;
-                        player.Healthtimer = 1.5f;
+                        player.Healthdelay = 1.5f;
                     }
                 }
 
                 Shooting.bullets.RemoveAll(p => p.Collision);
-                Enemy.enemies.RemoveAll(e => e.Health <= 0);
+                Monster.enemies.RemoveAll(e => e.Health <= 0);
            
             base.Update(gameTime);
         }
@@ -210,9 +229,9 @@ namespace rpg_game
            spriteBatch.Begin(transformMatrix: playerCam.GetViewMatrix());
 
                 if (player.Health > 0)
-                    player.anim.Draw(spriteBatch, new Vector2(player.Position.X - 48, player.Position.Y - 48));
+                    player.anim.Draw(spriteBatch, new Vector2(player.Pos.X - 48, player.Pos.Y - 48));
 
-                foreach (Enemy en in Enemy.enemies)
+                foreach (Monster en in Monster.enemies)
                 {
                     Texture2D spriteToDraw;
                     int rad;
@@ -226,7 +245,7 @@ namespace rpg_game
                         spriteToDraw = eyeEnemy_Sprite;
                         rad = 73;
                     }
-                    spriteBatch.Draw(spriteToDraw, new Vector2(en.Position.X - rad, en.Position.Y - rad), Color.White);
+                    spriteBatch.Draw(spriteToDraw, new Vector2(en.Pos.X - rad, en.Pos.Y - rad), Color.White);
                 }
 
                 // Draw obstacle sprites on the map

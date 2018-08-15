@@ -42,13 +42,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnimatedSprite.cs" />
-    <Compile Include="Enemy.cs" />
+    <Compile Include="Monster.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Obstacle.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shooting.cs" />
+    <Compile Include="Walker.cs" />
+    <Compile Include="Zombie1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -92,6 +94,14 @@
     <None Include="Content\Player\playerUp.xnb" />
     <None Include="Content\Screens\begin.xnb" />
     <None Include="Content\Screens\end.xnb" />
+    <None Include="Content\Zombie1\zombie1Down.xnb" />
+    <None Include="Content\Zombie1\zombie1Left.xnb" />
+    <None Include="Content\Zombie1\zombie1Right.xnb" />
+    <None Include="Content\Zombie1\zombie1Up.xnb" />
+    <None Include="Content\Zombie1\zombieFront.xnb" />
+    <None Include="Content\Zombie1\zombieLeft.xnb" />
+    <None Include="Content\Zombie1\zombieRight.xnb" />
+    <None Include="Content\Zombie1\zombieUp.xnb" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
