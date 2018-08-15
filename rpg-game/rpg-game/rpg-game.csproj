@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Misc\rpgTiles.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +79,7 @@
     <None Include="Content\Enemies\eyeEnemy.xnb" />
     <None Include="Content\Enemies\snakeEnemy.xnb" />
     <None Include="Content\Misc\bullet.xnb" />
+    <None Include="Content\Misc\game_map.tmx" />
     <None Include="Content\Misc\game_map.xnb" />
     <None Include="Content\Misc\heart.xnb" />
     <None Include="Content\Misc\rpgTiles.xnb" />

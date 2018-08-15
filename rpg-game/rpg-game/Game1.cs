@@ -140,8 +140,8 @@ namespace rpg_game
         {
             MouseState mouse = Mouse.GetState();
 
-            if (beginScreenOn == false && endScreenOn == false)
-            {
+            //if (beginScreenOn == false && endScreenOn == false)
+           // {
 
             
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -186,19 +186,7 @@ namespace rpg_game
 
                 Shooting.bullets.RemoveAll(p => p.Collision);
                 Enemy.enemies.RemoveAll(e => e.Health <= 0);
-            }
-            else if (beginScreenOn)
-            {
-                if (mouse.LeftButton == ButtonState.Pressed)
-                {
-                    beginScreenOn = false;
-                    endScreenOn = false;
-                }
-            }
-            else if (player.Health == 0)
-            {
-                endScreenOn = true;
-            }
+           
             base.Update(gameTime);
         }
         // UPDATE END <===============================================================
@@ -214,12 +202,8 @@ namespace rpg_game
 
             mapRenderer.Draw(myMap, playerCam.GetViewMatrix());
 
-            
+           spriteBatch.Begin(transformMatrix: playerCam.GetViewMatrix());
 
-                spriteBatch.Begin(transformMatrix: playerCam.GetViewMatrix());
-
-            if (beginScreenOn == false && endScreenOn == false)
-            { 
                 if (player.Health > 0)
                     player.anim.Draw(spriteBatch, new Vector2(player.Position.X - 48, player.Position.Y - 48));
 
@@ -256,29 +240,16 @@ namespace rpg_game
                 {
                     spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Position.X- bullet.Radius, bullet.Position.Y - bullet.Radius), Color.White);
                 }
-            }
+            
 
                 spriteBatch.End();
                spriteBatch.Begin();
-            //BEGINSCREEN=====================================================
-            if (beginScreenOn)
-            {
-                spriteBatch.Draw(beginScreen, screen, Color.White);
-            }
-            //ENDSCREEN=======================================================
-            if (endScreenOn)
-            {
-                spriteBatch.Draw(endScreen, screen, Color.White);
-            }
-            
-            if (beginScreenOn == false && endScreenOn == false) //STARTSCREEN
-            {
+           
                 for (int i = 0; i < player.Health; i++)
-                {
+               {
                     spriteBatch.Draw(heart_Sprite, new Vector2(i * 63, 0), Color.White);
                 }
-            }
-
+          
                 spriteBatch.End();
                 base.Draw(gameTime);
         }
