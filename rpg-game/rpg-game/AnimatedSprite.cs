@@ -16,6 +16,16 @@ namespace rpg_game
         private int totalFrames;
         private double timer;
         private double speed;
+    
+        Vector2 AngleToVector(float angle)
+        {
+            return new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+        }
+        float VectorToAngle(Vector2 vector)
+        {
+            return (float)Math.Atan2(vector.Y, vector.X);
+        }
+        
         public AnimatedSprite(Texture2D texture, int rows, int colums)
         {
             Texture = texture;
@@ -26,6 +36,8 @@ namespace rpg_game
             speed = 0.15D;
             timer = speed;
         }
+
+
 
         public void Update(GameTime gameTime)
         {

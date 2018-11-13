@@ -1,15 +1,26 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace rpg_game
 {
-    class Monster
+    class Monster : Player
     {
+   
         protected int currentHealth, currentSpeed, monsterRad;
         private Vector2 pos;
+        protected bool dead = false;
+       
 
         public static List<Monster> enemies = new List<Monster>();
+
+        public bool Dead
+        {
+            get { return dead;  }
+            set { dead = value; }
+        }
 
         public int Health
         {
@@ -34,9 +45,11 @@ namespace rpg_game
         public void Update(GameTime gameTime, Vector2 playerPos)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
+            
+     
             Vector2 headingDir = playerPos - pos;
             headingDir.Normalize();
+
             // Collision between enemy and obstacles
             Vector2 tempPos = pos;
             tempPos += headingDir * currentSpeed * dt;
@@ -46,6 +59,9 @@ namespace rpg_game
             }
 
             pos += headingDir * currentSpeed * dt;
+
+           
+
         }
     }
 
@@ -56,8 +72,11 @@ namespace rpg_game
             currentSpeed = 50;
             monsterRad = 42;
             currentHealth = 2;
-
+            dead = false;
+            
         }
+        
+        
     }
     class Eye : Monster
     {
@@ -67,7 +86,8 @@ namespace rpg_game
             currentSpeed = 50;
             monsterRad = 45;
             currentHealth = 10;
-        }
+            dead = false;
 
+        }
     }
 }

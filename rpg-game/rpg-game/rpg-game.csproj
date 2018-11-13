@@ -49,8 +49,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shooting.cs" />
-    <Compile Include="Walker.cs" />
-    <Compile Include="Zombie1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -72,28 +70,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Misc\rpgTiles.png" />
+    <Content Include="Content\World\rpgTiles.png" />
+    <Content Include="Content\Sounds\end.wma" />
+    <Content Include="Content\Sounds\intro.wma" />
+    <Content Include="Content\Sounds\win.wav" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
-    <None Include="Content\Enemies\eyeEnemy.xnb" />
-    <None Include="Content\Enemies\snakeEnemy.xnb" />
-    <None Include="Content\Misc\bullet.xnb" />
-    <None Include="Content\Misc\game_map.tmx" />
-    <None Include="Content\Misc\game_map.xnb" />
-    <None Include="Content\Misc\heart.xnb" />
-    <None Include="Content\Misc\rpgTiles.xnb" />
-    <None Include="Content\Obstacles\bush.xnb" />
-    <None Include="Content\Obstacles\tree.xnb" />
+    <None Include="Content\Monsters\eyeEnemy.xnb" />
+    <None Include="Content\Monsters\snakeEnemy.xnb" />
+    <None Include="Content\World\bullet.xnb" />
+    <None Include="Content\World\heart.xnb" />
+    <None Include="Content\World\rpgTiles.xnb" />
+    <None Include="Content\Collisions\bush.xnb" />
+    <None Include="Content\Collisions\tree.xnb" />
     <None Include="Content\Player\player.xnb" />
     <None Include="Content\Player\playerDown.xnb" />
     <None Include="Content\Player\playerLeft.xnb" />
     <None Include="Content\Player\playerRight.xnb" />
     <None Include="Content\Player\playerUp.xnb" />
-    <None Include="Content\Screens\begin.xnb" />
-    <None Include="Content\Screens\end.xnb" />
+    <None Include="Content\Screens\introScreen.xnb" />
+    <None Include="Content\Screens\loseScreen.xnb" />
+    <None Include="Content\Screens\winScreen.xnb" />
     <None Include="Content\Zombie1\zombie1Down.xnb" />
     <None Include="Content\Zombie1\zombie1Left.xnb" />
     <None Include="Content\Zombie1\zombie1Right.xnb" />

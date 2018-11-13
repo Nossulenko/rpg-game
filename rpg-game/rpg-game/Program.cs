@@ -16,6 +16,7 @@ namespace rpg_game
         {
             using (var game = new Game1())
                 game.Run();
+           
         }
     }
 #endif

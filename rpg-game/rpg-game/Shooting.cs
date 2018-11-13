@@ -35,7 +35,8 @@ namespace rpg_game
         public bool Collision
         {
             get { return collision; }
-            set { collision = value; }
+            set { collision = value;
+            }
         }
         public int Radius
         {

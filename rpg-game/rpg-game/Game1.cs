@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Graphics;
@@ -22,10 +24,24 @@ namespace rpg_game
         TiledMapRenderer mapRenderer;
         TiledMap myMap;
         Camera2D playerCam;
+        Rectangle destRect, sourceRect, screen;
+        float elapsed;
+        float delay = 200f;
+        int frames = 0;
+        
+
+        Song[] songs = new Song[3];
+        SoundEffect[] soundEffects = new SoundEffect[3];
+
+        bool startScreenOn = true,
+            loseScreenOn = false,
+            winScreenOn = false,
+            endScreenOn = false;
 
         Texture2D
             beginScreen,
             endScreen,
+            winScreen,
             player_Sprite,
             playerDown_Sprite,
             playerLeft_Sprite,
@@ -42,8 +58,11 @@ namespace rpg_game
             zombieUp_Sprite,
             zombieLeft_Sprite,
             zombieRight_Sprite;
-         
+
         Player player = new Player();
+        
+
+        
 
         public Game1()
         {
@@ -54,11 +73,16 @@ namespace rpg_game
             graphics.PreferredBackBufferHeight = 1200;
         }
 
-       
+        
+
         protected override void Initialize()
         {
             mapRenderer = new TiledMapRenderer(GraphicsDevice);
             playerCam = new Camera2D(GraphicsDevice);
+
+            destRect = new Rectangle(100, 100, 96, 96);
+            
+
 
             base.Initialize();
         }
@@ -66,123 +90,204 @@ namespace rpg_game
         // LOAD CONTENT BEGIN<=========================================================
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+              
+                    // Create a new SpriteBatch, which can be used to draw textures.
+                    spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player_Sprite = Content.Load<Texture2D>("Player/player");
-            playerUp_Sprite = Content.Load<Texture2D>("Player/PlayerUp");
-            playerRight_Sprite = Content.Load<Texture2D>("Player/playerRight");
-            playerLeft_Sprite = Content.Load<Texture2D>("Player/playerLeft");
-            playerDown_Sprite = Content.Load<Texture2D>("Player/playerDown");
+                    songs[0] = Content.Load<Song>("Sounds/intro");
+                    songs[1] = Content.Load<Song>("Sounds/end");
+                    // songs[2] = Content.Load<Song>("Sounds/win");
 
-            zombieFront_Sprite = Content.Load<Texture2D>("Zombie1/zombieFront");
-            zombieDown_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Down");
-            zombieUp_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Up");
-            zombieLeft_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Left");
-            zombieRight_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Right");
+                    endScreen = Content.Load<Texture2D>("Screens/loseScreen");
+                    beginScreen = Content.Load<Texture2D>("Screens/introScreen");
+                    winScreen = Content.Load<Texture2D>("Screens/winScreen");
 
-            //endScreen = Content.Load<Texture2D>("Screens/end");
-            //beginScreen = Content.Load<Texture2D>("Screens/begin");
+                    bullet_Sprite = Content.Load<Texture2D>("World/bullet");
+                    heart_Sprite = Content.Load<Texture2D>("World/heart");
 
+                    eyeEnemy_Sprite = Content.Load<Texture2D>("Monsters/eyeEnemy");
+                    snakeEnemy_Sprite = Content.Load<Texture2D>("Monsters/snakeEnemy");
 
-            bullet_Sprite = Content.Load<Texture2D>("Misc/bullet");
-            heart_Sprite = Content.Load<Texture2D>("Misc/heart");
+                    bush_Sprite = Content.Load<Texture2D>("Collisions/bush");
+                    tree_Sprite = Content.Load<Texture2D>("Collisions/tree");
 
-            eyeEnemy_Sprite = Content.Load<Texture2D>("Enemies/eyeEnemy");
-            snakeEnemy_Sprite = Content.Load<Texture2D>("Enemies/snakeEnemy");
+                    player_Sprite = Content.Load<Texture2D>("Player/player");
+                    playerUp_Sprite = Content.Load<Texture2D>("Player/PlayerUp");
+                    playerRight_Sprite = Content.Load<Texture2D>("Player/playerRight");
+                    playerLeft_Sprite = Content.Load<Texture2D>("Player/playerLeft");
+                    playerDown_Sprite = Content.Load<Texture2D>("Player/playerDown");
 
-            bush_Sprite = Content.Load<Texture2D>("Obstacles/bush");
-            tree_Sprite = Content.Load<Texture2D>("Obstacles/tree");
+                    zombieFront_Sprite = Content.Load<Texture2D>("Zombie1/zombieFront");
+                    zombieDown_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Down");
+                    zombieUp_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Up");
+                    zombieLeft_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Left");
+                    zombieRight_Sprite = Content.Load<Texture2D>("Zombie1/zombie1Right");
 
-            AnimatedSprite playerWalkDown = new AnimatedSprite(playerDown_Sprite, 1, 4);
-            AnimatedSprite playerWalkUp = new AnimatedSprite(playerUp_Sprite, 1, 4);
-            AnimatedSprite playerWalkLeft = new AnimatedSprite(playerLeft_Sprite, 1, 4);
-            AnimatedSprite playerWalkRight = new AnimatedSprite(playerRight_Sprite, 1, 4);
+                    //AnimatedSprite zombieWalkDown = new AnimatedSprite(zombieDown_Sprite, 1, 4);
+                    //AnimatedSprite zombieWalkUp = new AnimatedSprite(zombieUp_Sprite, 1, 4);
+                    //AnimatedSprite zombieWalkLeft = new AnimatedSprite(zombieLeft_Sprite, 1, 4);
+                    //AnimatedSprite zombieWalkRight = new AnimatedSprite(zombieRight_Sprite, 1, 4);
 
-            player.animations[0] = playerWalkDown;
-            player.animations[1] = playerWalkUp;
-            player.animations[2] = playerWalkLeft;
-            player.animations[3] = playerWalkRight;
+                    AnimatedSprite playerWalkDown = new AnimatedSprite(playerDown_Sprite, 1, 4);
+                    AnimatedSprite playerWalkUp = new AnimatedSprite(playerUp_Sprite, 1, 4);
+                    AnimatedSprite playerWalkLeft = new AnimatedSprite(playerLeft_Sprite, 1, 4);
+                    AnimatedSprite playerWalkRight = new AnimatedSprite(playerRight_Sprite, 1, 4);
 
-            
-            AnimatedSprite zombieWalkDown = new AnimatedSprite(zombieDown_Sprite, 1, 4);
-            AnimatedSprite zombieWalkUp = new AnimatedSprite(zombieUp_Sprite, 1, 4);
-            AnimatedSprite zombiueWalkLeft = new AnimatedSprite(zombieLeft_Sprite, 1, 4);
-            AnimatedSprite zombieWalkRight = new AnimatedSprite(zombieRight_Sprite, 1, 4);
-            
-            myMap = Content.Load<TiledMap>("Misc/game_map");
+                    player.animations[0] = playerWalkDown;
+                    player.animations[1] = playerWalkUp;
+                    player.animations[2] = playerWalkLeft;
+                    player.animations[3] = playerWalkRight;
 
-            //screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+                    screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
-            //all enemies is an array that contains tail objects and we are stting it = to are maps
-            //enemies layer and all object that that layer contains.
+                    myMap = Content.Load<TiledMap>("World/game_map");
+                     MediaPlayer.Play(songs[0]);
 
-            TiledMapObject[] allEnemies = myMap.GetLayer<TiledMapObjectLayer>("enemies").Objects;
-            foreach (var en in allEnemies)
-            {   
-                string type;
-                en.Properties.TryGetValue("Type", out type);
-                if (type == "Snake")
-                {
-                    Monster.enemies.Add(new Snake(en.Position));
-                }
-                else if (type == "Eye")
-                {
-                    Monster.enemies.Add(new Eye(en.Position));
-                }
+                    //screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
+                    //all enemies is an array that contains tail objects and we are stting it = to are maps
+                    //enemies layer and all object that that layer contains.
+
+                    TiledMapObject[] allEnemies = myMap.GetLayer<TiledMapObjectLayer>("enemies").Objects;
+                    foreach (var en in allEnemies)
+                    {
+                        // Hier worden de enemies aanghemaakt op basis van de enemies layer op de map
+                        string type;
+                        en.Properties.TryGetValue("Type", out type);
+                        if (type == "Snake")
+                        {
+                            Monster.enemies.Add(new Snake(en.Position));
+                        }
+                        else if (type == "Eye")
+                        {
+                            Monster.enemies.Add(new Eye(en.Position));
+                        }
                
-            }
+                    }
 
-            TiledMapObject[] allObstacles = myMap.GetLayer<TiledMapObjectLayer>("obstacles").Objects;
-            foreach (var obs in allObstacles)
-            {
-                string type;
-                obs.Properties.TryGetValue("Type", out type);
-                if (type == "Bush")
-                    Obstacle.obstacles.Add(new Bush(obs.Position));
-               
-                if (type == "Tree")
-                    Obstacle.obstacles.Add(new Tree(obs.Position));
-                
-            }
-            //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
-            //Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
+                    TiledMapObject[] allObstacles = myMap.GetLayer<TiledMapObjectLayer>("obstacles").Objects;
+                    foreach (var obs in allObstacles)
+                    {
+                        string type;
+                        obs.Properties.TryGetValue("Type", out type);
+                        if (type == "Bush")
+                        {
+                            Obstacle.obstacles.Add(new Bush(obs.Position));
+                        }
+                        else if (type == "Tree")
+                        {
+                            Obstacle.obstacles.Add(new Tree(obs.Position));
+                        }
+                    
 
-            //Obstacle.obstacles.Add(new Tree(new Vector2(600, 200)));
-            //Obstacle.obstacles.Add(new Bush(new Vector2(800, 400)));
+                    }
+              
+           
+                //Enemy.enemies.Add(new Snake(new Vector2(100, 400)));
+                //Enemy.enemies.Add(new Eye(new Vector2(300, 450)));
+
+                //Obstacle.obstacles.Add(new Tree(new Vector2(600, 200)));
+                //Obstacle.obstacles.Add(new Bush(new Vector2(800, 400)));
 
         }
         // LOAD CONTENT END<=========================================================
 
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+        
         }
 
         // UPDATE BEGIN<===============================================================
         protected override void Update(GameTime gameTime)
         {
-            MouseState mouse = Mouse.GetState();
+            var aliveMonsters = (Monster.enemies.FindAll(en => !en.Dead));
+            KeyboardState keys = Keyboard.GetState();
 
-            //if (beginScreenOn == false && endScreenOn == false)
-           // {
+            if (aliveMonsters.Count == 0)
+            {
+                winScreenOn = true;
+                if (keys.IsKeyDown(Keys.Enter))
+                {
+                    foreach (Monster en in Monster.enemies)
+                    {
+                        en.Update(gameTime, player.Pos);
 
-            
+
+                    }
+                    winScreenOn = false;
+                    endScreenOn = false;
+
+                    player.Health =+ 5;
+
+                }
+
+            }
+
+           
+
+            //++++++++++++++++++++++++STARTSCREEN+++++++++++++++++++++++
+
+
+            if (startScreenOn || endScreenOn)
+            {
+                if (keys.IsKeyDown(Keys.Enter))
+                {
+                    
+                    startScreenOn = false;
+                    MediaPlayer.IsMuted = true;
+                    
+                }
+            }
+            if (player.Health <= 0)
+            {
+                
+                endScreenOn = true;
+                if (keys.IsKeyDown(Keys.Enter))
+                {
+                    endScreenOn = false;
+                    
+                    player.Health =+ 5;
+                    
+
+                }
+
+
+            }
+            if (startScreenOn == false && endScreenOn == false)
+            {
+                elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (elapsed >= delay)
+                {
+                    if (frames >= 3)
+                    {
+                        frames = 0;
+                    }
+                    else
+                    {
+                        frames++;
+                    }
+                    elapsed = 0;
+                }
+                sourceRect = new Rectangle(96 * frames, 0, 96, 96);
+
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     Exit();
-                if(player.Health > 0)
+                if (player.Health > 0)
                     player.Update(gameTime);
 
                 playerCam.LookAt(player.Pos);
 
-                foreach(Shooting bullet in Shooting.bullets)
+                foreach (Shooting bullet in Shooting.bullets)
                     bullet.Update(gameTime);
-            
-                foreach (Monster en in Monster.enemies)
-                    en.Update(gameTime, player.Pos);
-            
 
-                foreach (Shooting bullet in Shooting.bullets )
+                foreach (Monster en in Monster.enemies)
+                {
+                    en.Update(gameTime, player.Pos);
+                   
+                    
+                }
+
+                foreach (Shooting bullet in Shooting.bullets)
                 {
                     foreach (Monster en in Monster.enemies)
                     {
@@ -192,6 +297,7 @@ namespace rpg_game
                             bullet.Collision = true;
                             en.Health--;
                         }
+                        
                     }
                     // Collision between bullet and the obstacles
                     if (Obstacle._collided(bullet.Position, bullet.Radius))
@@ -206,12 +312,17 @@ namespace rpg_game
                         player.Health--;
                         player.Healthdelay = 1.5f;
                     }
-                }
 
+                }
                 Shooting.bullets.RemoveAll(p => p.Collision);
                 Monster.enemies.RemoveAll(e => e.Health <= 0);
-           
-            base.Update(gameTime);
+
+                base.Update(gameTime);
+            }
+
+            //++++++++++++++++++++++++STARTSCREEN+++++++++++++++++++++++
+
+            
         }
         // UPDATE END <===============================================================
 
@@ -222,31 +333,54 @@ namespace rpg_game
         // DRAW BEGIN <=================================================================
         protected override void Draw(GameTime gameTime) 
         {
-            GraphicsDevice.Clear(Color.Black);
+            
+                GraphicsDevice.Clear(Color.CornflowerBlue);
 
             mapRenderer.Draw(myMap, playerCam.GetViewMatrix());
 
            spriteBatch.Begin(transformMatrix: playerCam.GetViewMatrix());
 
+            if (startScreenOn)
+            {
+                spriteBatch.Draw(beginScreen, screen, Color.White);
+            }
+            if (endScreenOn)
+            {
+                spriteBatch.Draw(endScreen, screen, Color.White);
+                
+            }
+            
+
+            //++++++++++++++++++++++++STARTSCREEN+++++++++++++++++++++++
+            if (startScreenOn == false && endScreenOn == false)
+            { 
                 if (player.Health > 0)
                     player.anim.Draw(spriteBatch, new Vector2(player.Pos.X - 48, player.Pos.Y - 48));
+
+               
 
                 foreach (Monster en in Monster.enemies)
                 {
                     Texture2D spriteToDraw;
                     int rad;
-                    if (en.GetType() == typeof(Snake))
+                   
+                    if (en.GetType() == typeof(Eye))
                     {
-                        spriteToDraw = snakeEnemy_Sprite;
+                        spriteToDraw = eyeEnemy_Sprite;
                         rad = 50;
                     }
                     else
                     {
-                        spriteToDraw = eyeEnemy_Sprite;
-                        rad = 73;
+                        spriteToDraw = snakeEnemy_Sprite;
+                        rad = 50;
                     }
-                    spriteBatch.Draw(spriteToDraw, new Vector2(en.Pos.X - rad, en.Pos.Y - rad), Color.White);
+                    
+                       
+                spriteBatch.Draw(spriteToDraw, new Vector2(en.Pos.X - rad, en.Pos.Y - rad), Color.White);
                 }
+
+            
+             
 
                 // Draw obstacle sprites on the map
                 foreach (Obstacle o in Obstacle.obstacles)
@@ -264,17 +398,37 @@ namespace rpg_game
                 {
                     spriteBatch.Draw(bullet_Sprite, new Vector2(bullet.Position.X- bullet.Radius, bullet.Position.Y - bullet.Radius), Color.White);
                 }
-            
 
+            }
+            //++++++++++++++++++++++++STARTSCREEN+++++++++++++++++++++++
                 spriteBatch.End();
-               spriteBatch.Begin();
+                spriteBatch.Begin();
+
+            if (startScreenOn)
+            {
+                spriteBatch.Draw(beginScreen, screen, Color.White);
+            }
+            if (endScreenOn)
+            {
+                spriteBatch.Draw(endScreen, screen, Color.White);
+            }
            
+            //++++++++++++++++++++++++STARTSCREEN+++++++++++++++++++++++
+            if (startScreenOn == false && endScreenOn == false)
+            {
                 for (int i = 0; i < player.Health; i++)
-               {
+                {
                     spriteBatch.Draw(heart_Sprite, new Vector2(i * 63, 0), Color.White);
                 }
-          
-                spriteBatch.End();
+            }
+
+            if (winScreenOn)
+            {
+                spriteBatch.Draw(winScreen, screen, Color.White);
+            }
+
+            //++++++++++++++++++++++++STARTSCREEN+++++++++++++++++++++++
+            spriteBatch.End();
                 base.Draw(gameTime);
         }
         // DRAW END <===========================================================
